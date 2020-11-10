@@ -11,6 +11,7 @@ from discord.ext import commands
 
 DATABASE_URL = os.environ['DATABASE_URL']
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+cur = conn.cursor()
 
 TOKEN = os.getenv('DISCORD_TOKEN')
 
@@ -44,9 +45,9 @@ async def addons(ctx):
 @bot.command(name='schedule', help='Raid team schedules.')
 async def schedule(ctx):
     response = (
-        'ALB: Tuesday and Wednesday, 9pm Server Time'
-        'RSC: Thursday and Monday, 8pm Server Time'
-        'APD: Sunday and Monday, 8pm Server Time'
+        'ALB: Tuesday and Wednesday, 9pm Server Time \n'
+        'RSC: Thursday and Monday, 8pm Server Time \n'
+        'APD: Sunday and Monday, 8pm Server Time \n'
     )
     await ctx.send(response)
 
@@ -57,6 +58,20 @@ async def scourge(ctx):
     )
     await ctx.send(response)
 
+@bot.command(name='bench', help='Command for managing absent or benched raid memebers who would be available for an alt raid team.')
+async def bench(ctx, name=None, spec=None):
+    if name == None and spec==None:
+        response = ('Syntax for use: "!bench Crypto DPS')
+        await ctx.send(response)
+    else:
+        cur.execute('INSERT INTO test (name, spec) VALUES (%s, %s)', (name, spec))
+        response = ('Added!')
+        await ctx.send(response)
+
+@bot.command(name='whobench', help='Command for managing absent or benched raid memebers who would be available for an alt raid team.')
+async def whobench(ctx):
+    response = cur.execute('SELECT * FROM test')
+    await ctx.send(response)
 
 # @bot.event
 # async def on_message(message):
