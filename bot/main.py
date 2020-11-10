@@ -1,11 +1,17 @@
 # bot.py
 import os
+import psycopg2
 import random
 import discord
 from discord.ext import commands
+import psycopg2
+
 
 # from dotenv import load_dotenv
 # load_dotenv()
+
+DATABASE_URL = os.environ['DATABASE_URL']
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 TOKEN = os.getenv('DISCORD_TOKEN')
 
@@ -35,6 +41,23 @@ async def addons(ctx):
         'Community DKP: https://www.curseforge.com/wow/addons/community-dkp \n'
     )
     await ctx.send(response)
+
+@bot.command(name='schedule', help='Raid team schedules.')
+async def schedule(ctx):
+    response = (
+        'ALB: Tuesday and Wednesday, 9pm Server Time'
+        'RSC: Thursday and Monday, 8pm Server Time'
+        'APD: Sunday and Monday, 8pm Server Time'
+    )
+    await ctx.send(response)
+
+@bot.command(name='scourge', help='Link the scourge event guide.')
+async def scourge(ctx):
+    response = (
+        'Scourge Invasion: https://bittsguides.com/scourge-invasion-guide/'
+    )
+    await ctx.send(response)
+
 
 # @bot.event
 # async def on_message(message):
