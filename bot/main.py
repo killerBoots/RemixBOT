@@ -60,17 +60,26 @@ async def scourge(ctx):
 
 @bot.command(name='bench', help='Command for managing absent or benched raid memebers who would be available for an alt raid team.')
 async def bench(ctx, name=None, spec=None):
-    if name == None and spec==None:
+    if name == None or spec==None:
         response = ('Syntax for use: "!bench Crypto DPS')
         await ctx.send(response)
     else:
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        cur = conn.cursor()
         cur.execute('INSERT INTO test (name, spec) VALUES (%s, %s)', (name, spec))
+        cur.close()
+        conn.close()
         response = ('Added!')
         await ctx.send(response)
 
 @bot.command(name='whobench', help='Command for managing absent or benched raid memebers who would be available for an alt raid team.')
 async def whobench(ctx):
-    response = cur.execute('SELECT * FROM test')
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM test')
+    response = cur.fetchall()
+    cur.close()
+    conn.close()
     await ctx.send(response)
 
 # @bot.event
