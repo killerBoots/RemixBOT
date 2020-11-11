@@ -1,5 +1,6 @@
 # bot.py
 import os
+import datetime
 import psycopg2
 import random
 import discord
@@ -60,13 +61,14 @@ async def scourge(ctx):
 
 @bot.command(name='bench', help='Command for managing absent or benched raid memebers who would be available for an alt raid team.')
 async def bench(ctx, name=None, spec=None):
+    cur_date = datetime.datetime.now().date()
     if name == None or spec==None:
         response = ('Syntax for use: "!bench Crypto DPS')
         await ctx.send(response)
     else:
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
-        cur.execute("INSERT INTO test (name, spec) VALUES ('{}', '{}')".format(name, spec))
+        cur.execute("INSERT INTO test (name, spec, date) VALUES ('{}', '{}', {})".format(name, spec, cur_date))
         conn.commit()
         cur.close()
         conn.close()
@@ -77,7 +79,7 @@ async def bench(ctx, name=None, spec=None):
 async def whobench(ctx):
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cur = conn.cursor()
-    cur.execute('SELECT * FROM test')
+    cur.execute('SELECT name, spec FROM test')
     response = cur.fetchall()
     cur.close()
     conn.close()
