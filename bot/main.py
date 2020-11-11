@@ -66,7 +66,7 @@ async def bench(ctx, name=None, spec=None):
     else:
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
-        cur.execute('INSERT INTO test (name, spec) VALUES (%s, %s)', (name, spec))
+        cur.execute('INSERT INTO test (name, spec) VALUES ({}, {})'.format(name, spec))
         cur.close()
         conn.close()
         response = ('Added!')
