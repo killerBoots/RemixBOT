@@ -5,7 +5,7 @@ import psycopg2
 import random
 import discord
 from discord.ext import commands
-
+from psycopg2 import sql
 
 # from dotenv import load_dotenv
 # load_dotenv()
@@ -21,6 +21,7 @@ bot = commands.Bot(command_prefix='!')
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
+    await bot.change_presence(status=discord.Status.idle, activity=discord.Game("Scanning your 🧠"))
 
 @bot.command(name='frost', help='Link to frost resist guide.')
 async def frost(ctx):
@@ -29,7 +30,7 @@ async def frost(ctx):
 
 
 @bot.command(name='roll', help='Syntax: "!roll 20 55"  Simulates rolling x to y. Default 1 to 100.')
-async def roll(ctx, x = 1, y = 101):
+async def roll(ctx, x = 1, y = 100):
     response = random.randint(x, y)
     await ctx.send(response)
 
@@ -39,7 +40,7 @@ async def addons(ctx):
         'Deadly Boss Mods: https://www.curseforge.com/wow/addons/deadly-boss-mods/files \n'
         'Details!: https://www.curseforge.com/wow/addons/details/files \n'
         'Power Raid: https://www.curseforge.com/wow/addons/power-raid \n'
-        'Community DKP: https://www.curseforge.com/wow/addons/community-dkp \n'
+        'Community DKP: https://www.curseforge.com/wow/addons/communitydkp \n'
     )
     await ctx.send(response)
 
@@ -62,28 +63,42 @@ async def scourge(ctx):
 @bot.command(name='bench', help='Command for managing absent or benched raid memebers who would be available for an alt raid team.')
 async def bench(ctx, name=None, spec=None):
     cur_date = datetime.datetime.now().date()
+    author = ctx.message.author.name
     if name == None or spec==None:
-        response = ('Syntax for use: "!bench Crypto DPS')
+        response = ('Syntax for use: "!bench Crypto DPS"')
         await ctx.send(response)
     else:
+        insert = sql.SQL("INSERT INTO tblBench (name, spec, date, by) VALUES ('{}', '{}', '{}', '{}')".format(name, spec, cur_date, author))
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
-        cur.execute("INSERT INTO test (name, spec, date) VALUES ('{}', '{}', {})".format(name, spec, cur_date))
+        cur.execute(insert)
         conn.commit()
         cur.close()
         conn.close()
-        response = ('Added!')
+        response = (author + ', I added your request.')
         await ctx.send(response)
 
 @bot.command(name='whobench', help='Command for managing absent or benched raid memebers who would be available for an alt raid team.')
 async def whobench(ctx):
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cur = conn.cursor()
-    cur.execute('SELECT name, spec FROM test')
+    cur.execute('SELECT name, spec, by, date FROM tblBench')
     response = cur.fetchall()
     cur.close()
     conn.close()
-    await ctx.send(response)
+    listing = ''
+    for result in response:
+        listing = listing + '**' + result[0] + ' - ' + result[1] + '**        added by: ' + result[2] + ' on ' + result[3].strftime('%Y-%m-%d')
+    await ctx.send(listing)
+
+
+@bot.command(name='tier3', help="Link to Bitt's Tier 3 Armor Guide.")
+async def tier3(ctx):
+    await ctx.send('https://bittsguides.com/tier-3-armor-guide/')
+
+@bot.command()
+async def whoami(ctx):
+    await ctx.send(ctx.message.author.mention + ' you are in ' + str(ctx.message.channel) + ' chat channel.')
 
 # @bot.event
 # async def on_message(message):
