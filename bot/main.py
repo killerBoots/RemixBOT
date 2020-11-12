@@ -7,8 +7,8 @@ import discord
 from discord.ext import commands
 from psycopg2 import sql
 
-# from dotenv import load_dotenv
-# load_dotenv()
+from dotenv import load_dotenv
+load_dotenv()
 
 DATABASE_URL = os.environ['DATABASE_URL']
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
@@ -68,7 +68,7 @@ async def bench(ctx, name=None, spec=None, raid=None):
         response = ('Syntax for use: "!bench Crypto DPS AQ40"')
         await ctx.send(response)
     else:
-        insert = sql.SQL("INSERT INTO tblBench (name, spec, date, by, lockout) VALUES ('{}', '{}', '{}', '{}', {})".format(name, spec, cur_date, author, raid))
+        insert = sql.SQL("INSERT INTO tblBench (name, spec, date, by, lockout) VALUES ('{}', '{}', '{}', '{}', '{}')".format(name, spec, cur_date, author, raid))
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
         cur.execute(insert)
@@ -88,7 +88,7 @@ async def whobench(ctx):
     conn.close()
     listing = ''
     for result in response:
-        listing = listing + '**' + result[0] + ' - ' + result[1] + ' - ' + result[4] + '**        added by: ' + result[2] + ' on ' + result[3].strftime('%Y-%m-%d')
+        listing = listing + '**' + result[0] + ' - ' + result[1] + ' - ' + result[4] + '**        Added by ' + result[2] + ' on ' + result[3].strftime('%Y-%m-%d')
     await ctx.send(listing)
 
 
