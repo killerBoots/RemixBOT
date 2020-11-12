@@ -88,7 +88,7 @@ async def whobench(ctx):
     conn.close()
     listing = ''
     for result in response:
-        listing = listing + '**' + result[0] + ' - ' + result[1] + ' - ' + result[4] + '**        Added by ' + result[2] + ' on ' + result[3].strftime('%Y-%m-%d')
+        listing = listing + '**' + result[0] + ' - ' + result[1] + ' - ' + result[4] + '**        Added by ' + result[2] + ' on ' + result[3].strftime('%Y-%m-%d') + '\n'
     await ctx.send(listing)
 
 
