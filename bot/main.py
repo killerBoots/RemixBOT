@@ -21,7 +21,7 @@ bot = commands.Bot(command_prefix='!')
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
-    await bot.change_presence(status=discord.Status.idle, activity=discord.Game("Scanning your 🧠"))
+    await bot.change_presence(status=discord.Status.idle, activity=discord.Game("with your 🧠"))
 
 @bot.command(name='frost', help='Link to frost resist guide.')
 async def frost(ctx):
