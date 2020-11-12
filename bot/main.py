@@ -68,7 +68,7 @@ async def bench(ctx, name=None, spec=None, raid=None):
         response = ('Syntax for use: "!bench Crypto DPS AQ40"')
         await ctx.send(response)
     else:
-        insert = sql.SQL("INSERT INTO tblBench (name, spec, date, by, lockout) VALUES ('{}', '{}', '{}', '{}', {})".format(name, spec, cur_date, author, lockout))
+        insert = sql.SQL("INSERT INTO tblBench (name, spec, date, by, lockout) VALUES ('{}', '{}', '{}', '{}', {})".format(name, spec, cur_date, author, raid))
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
         cur.execute(insert)
