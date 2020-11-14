@@ -60,36 +60,36 @@ async def scourge(ctx):
     )
     await ctx.send(response)
 
-@bot.command(name='bench', help='Command for managing absent or benched raid memebers who would be available for an alt raid team.')
-async def bench(ctx, name=None, spec=None, raid=None):
-    cur_date = datetime.datetime.now().date()
-    author = ctx.message.author.name
-    if name == None or spec==None or raid==None:
-        response = ('Syntax for use: "!bench Crypto DPS AQ40"')
-        await ctx.send(response)
-    else:
-        insert = sql.SQL("INSERT INTO tblBench (name, spec, date, by, lockout) VALUES ('{}', '{}', '{}', '{}', '{}')".format(name, spec, cur_date, author, raid))
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-        cur = conn.cursor()
-        cur.execute(insert)
-        conn.commit()
-        cur.close()
-        conn.close()
-        response = ('Thanks ' + author + ', I added your request.')
-        await ctx.send(response)
+# @bot.command(name='bench', help='Command for managing absent or benched raid memebers who would be available for an alt raid team.')
+# async def bench(ctx, name=None, spec=None, raid=None):
+#     cur_date = datetime.datetime.now().date()
+#     author = ctx.message.author.name
+#     if name == None or spec==None or raid==None:
+#         response = ('Syntax for use: "!bench Crypto DPS AQ40"')
+#         await ctx.send(response)
+#     else:
+#         insert = sql.SQL("INSERT INTO tblBench (name, spec, date, by, lockout) VALUES ('{}', '{}', '{}', '{}', '{}')".format(name, spec, cur_date, author, raid))
+#         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+#         cur = conn.cursor()
+#         cur.execute(insert)
+#         conn.commit()
+#         cur.close()
+#         conn.close()
+#         response = ('Thanks ' + author + ', I added your request.')
+#         await ctx.send(response)
 
-@bot.command(name='whobench', help='Command for managing absent or benched raid memebers who would be available for an alt raid team.')
-async def whobench(ctx):
-    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-    cur = conn.cursor()
-    cur.execute('SELECT name, spec, by, date, lockout FROM tblBench')
-    response = cur.fetchall()
-    cur.close()
-    conn.close()
-    listing = ''
-    for result in response:
-        listing = listing + '**' + result[0] + ' - ' + result[1] + ' - ' + result[4] + '**        Added by ' + result[2] + ' on ' + result[3].strftime('%Y-%m-%d') + '\n'
-    await ctx.send(listing)
+# @bot.command(name='whobench', help='Command for managing absent or benched raid memebers who would be available for an alt raid team.')
+# async def whobench(ctx):
+#     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+#     cur = conn.cursor()
+#     cur.execute('SELECT name, spec, by, date, lockout FROM tblBench')
+#     response = cur.fetchall()
+#     cur.close()
+#     conn.close()
+#     listing = ''
+#     for result in response:
+#         listing = listing + '**' + result[0] + ' - ' + result[1] + ' - ' + result[4] + '**        Added by ' + result[2] + ' on ' + result[3].strftime('%Y-%m-%d') + '\n'
+#     await ctx.send(listing)
 
 
 @bot.command(name='tier3', help="Link to Bitt's Tier 3 Armor Guide.")
